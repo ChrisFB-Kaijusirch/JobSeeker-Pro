@@ -1,8 +1,15 @@
 import React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { motion } from "framer-motion";
 
-export default function PreferenceSection({ icon: Icon, title, description, children }) {
+interface PreferenceSectionProps {
+  icon?: React.ComponentType<{ className?: string }>;
+  title: string;
+  description?: string;
+  children: React.ReactNode;
+}
+
+export default function PreferenceSection({ icon: Icon, title, description, children }: PreferenceSectionProps) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}

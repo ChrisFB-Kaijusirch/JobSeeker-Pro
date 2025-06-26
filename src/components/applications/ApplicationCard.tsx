@@ -1,9 +1,9 @@
 
 import React from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { JobApplication } from "@/entities/all";
+import { Card, CardContent } from "../ui/card";
+import { Badge } from "../ui/badge";
+import { Button } from "../ui/button";
+import { JobApplication } from "../../entities/all";
 import { 
   ExternalLink, 
   Building2, 
@@ -39,7 +39,7 @@ const employmentTypeColors = {
   internship: "bg-green-50 text-green-700 border-green-200"
 };
 
-const getJobSource = (url) => {
+const getJobSource = (url: string) => {
   if (!url) return null;
   try {
     const hostname = new URL(url).hostname.toLowerCase();

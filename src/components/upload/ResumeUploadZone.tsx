@@ -1,14 +1,18 @@
 
 import React, { useRef, useState } from "react";
-import { Button } from "@/components/ui/button";
+import { Button } from "../ui/button";
 import { FileText, Upload, AlertCircle } from "lucide-react";
 import { motion } from "framer-motion";
 
-export default function ResumeUploadZone({ onFileSelect }) {
+interface ResumeUploadZoneProps {
+  onFileSelect: (file: File) => void;
+}
+
+export default function ResumeUploadZone({ onFileSelect }: ResumeUploadZoneProps) {
   const fileInputRef = useRef(null);
   const [dragActive, setDragActive] = useState(false);
 
-  const handleDrag = (e) => {
+  const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
     if (e.type === "dragenter" || e.type === "dragover") {

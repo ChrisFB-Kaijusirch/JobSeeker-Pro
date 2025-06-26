@@ -1,10 +1,10 @@
 
 import React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { Badge } from "../ui/badge";
+import { Button } from "../ui/button";
 import { Link } from "react-router-dom";
-import { createPageUrl } from "@/utils";
+import { createPageUrl } from "../../utils";
 import { format, formatDistanceToNow } from "date-fns";
 import { 
   ExternalLink, 
@@ -16,7 +16,7 @@ import {
   Globe
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "../ui/skeleton";
 
 const statusColors = {
   pending: "bg-amber-100 text-amber-800 border-amber-200",
@@ -28,7 +28,7 @@ const statusColors = {
   accepted: "bg-green-200 text-green-900 border-green-300"
 };
 
-const getJobSource = (url) => {
+const getJobSource = (url: string) => {
   if (!url) return null;
   try {
     const hostname = new URL(url).hostname.toLowerCase();
@@ -67,7 +67,12 @@ const jobSourceColors = {
   'default': 'bg-gray-50 text-gray-700 border-gray-200'
 };
 
-export default function RecentApplications({ applications, isLoading }) {
+interface RecentApplicationsProps {
+  applications: any[];
+  isLoading: boolean;
+}
+
+export default function RecentApplications({ applications, isLoading }: RecentApplicationsProps) {
   return (
     <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
       <CardHeader className="border-b border-slate-100 pb-6">
@@ -130,7 +135,7 @@ export default function RecentApplications({ applications, isLoading }) {
             </motion.div>
           ) : (
             <div className="space-y-4">
-              {applications.map((application, index) => {
+              {applications.map((application: any, index: number) => {
                 const jobSource = getJobSource(application.job_url);
                 return (
                 <motion.div
@@ -153,7 +158,7 @@ export default function RecentApplications({ applications, isLoading }) {
                         {jobSource && (
                           <Badge 
                             variant="outline" 
-                            className={`${jobSourceColors[jobSource] || jobSourceColors.default} text-xs font-medium`}
+                            className={`${jobSourceColors[jobSource as keyof typeof jobSourceColors] || jobSourceColors.default} text-xs font-medium`}
                           >
                             <Globe className="w-3 h-3 mr-1" />
                             {jobSource}
@@ -166,7 +171,7 @@ export default function RecentApplications({ applications, isLoading }) {
                         {formatDistanceToNow(new Date(application.created_date), { addSuffix: true })}
                       </Badge>
                     ) : (
-                      <Badge className={`${statusColors[application.status]} border font-medium`}>
+                      <Badge className={`${statusColors[application.status as keyof typeof statusColors]} border font-medium`}>
                         {application.status.replace('_', ' ')}
                       </Badge>
                     )}

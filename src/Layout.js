@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import { createPageUrl } from "@/utils";
+import { createPageUrl } from "./utils";
 import { 
   LayoutDashboard, 
   Upload, 
@@ -21,7 +21,7 @@ import {
   SidebarHeader,
   SidebarProvider,
   SidebarTrigger,
-} from "@/components/ui/sidebar";
+} from "./components/ui/sidebar";
 
 const navigationItems = [
   {

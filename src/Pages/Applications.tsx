@@ -1,10 +1,10 @@
-
 import React, { useState, useEffect } from "react";
-import { JobApplication, Resume, JobPreferences } from "@/entities/all";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
+import { JobApplication, Resume, JobPreferences, FilterOptions } from "../types";
+import { JobApplication as JobApplicationEntity, Resume as ResumeEntity, JobPreferences as JobPreferencesEntity } from "../entities/all";
+import { Button } from "../components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
+import { Badge } from "../components/ui/badge";
+import { Input } from "../components/ui/input";
 import {
   Search,
   Filter,
@@ -20,8 +20,8 @@ import {
 import { format } from "date-fns";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
-import { createPageUrl } from "@/utils";
-import { InvokeLLM } from "@/integrations/Core";
+import { createPageUrl } from "../utils";
+import { InvokeLLM } from "../integrations/Core";
 
 import ApplicationCard from "../components/applications/ApplicationCard";
 import ApplicationFilters from "../components/applications/ApplicationFilters";
@@ -29,9 +29,9 @@ import ApplicationStats from "../components/applications/ApplicationStats";
 
 export default function ApplicationsPage() {
   const [applications, setApplications] = useState<JobApplication[]>([]);
-  const [filteredApplications, setFilteredApplications] = useState([]);
+  const [filteredApplications, setFilteredApplications] = useState<JobApplication[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filters, setFilters] = useState({
+  const [filters, setFilters] = useState<FilterOptions>({
     status: "all",
     employment_type: "all",
     auto_applied: "all",
@@ -39,7 +39,8 @@ export default function ApplicationsPage() {
     bookmarked: "all",
     salary_min: "",
     salary_max: "",
-    location_filter: ""
+    location_filter: "",
+    date_range: "all"
   });
   const [isLoading, setIsLoading] = useState(true);
   const [isFindingJobs, setIsFindingJobs] = useState(false);
@@ -55,7 +56,7 @@ export default function ApplicationsPage() {
   const loadApplications = async () => {
     setIsLoading(true);
     try {
-      const data = await JobApplication.list("-created_date");
+      const data = await JobApplicationEntity.list("-created_date");
       setApplications(data);
     } catch (error) {
       console.error("Error loading applications:", error);
@@ -65,12 +66,16 @@ export default function ApplicationsPage() {
 
   const filterApplications = () => {
     let filtered = applications;
+// Then fix the filter function
+const applyFilters = () => {
+  let filtered = [...applications] as JobApplication[];
+}
 
     // Search filter
     if (searchTerm) {
       filtered = filtered.filter(app =>
         app.job_title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        app.company_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        app.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
         app.location.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
@@ -147,8 +152,8 @@ export default function ApplicationsPage() {
     try {
       // Get active resume and preferences
       const [resumeData, prefsData] = await Promise.all([
-        Resume.list("-created_date"),
-        JobPreferences.list("-created_date", 1)
+        ResumeEntity.list("-created_date"),
+        JobPreferencesEntity.list("-created_date", 1)
       ]);
       
       const activeResume = resumeData.find((r: Resume) => r.is_active);
@@ -162,15 +167,15 @@ export default function ApplicationsPage() {
 
       // Clear all existing 'pending' applications before starting a new search
       console.log("Clearing previous pending applications...");
-      const pendingApps = await JobApplication.filter({ status: 'pending' });
+      const pendingApps = await JobApplicationEntity.filter({ status: 'pending' });
       if (pendingApps.length > 0) {
-        await Promise.all(pendingApps.map(app => JobApplication.delete(app.id)));
+        await Promise.all(pendingApps.map((app: JobApplication) => JobApplicationEntity.delete(app.id)));
         console.log(`Cleared ${pendingApps.length} pending applications.`);
       }
 
-      let allFoundJobs = [];
-      const remainingApps = await JobApplication.list();
-      const existingUrls = new Set(remainingApps.map(app => app.job_url));
+      let allFoundJobs: JobApplication[] = [];
+      const remainingApps = await JobApplicationEntity.list();
+      const existingUrls = new Set(remainingApps.map((app: JobApplication) => app.job_url));
       
       const searchTasks = [];
       for (const jobTitle of preferences.preferred_job_titles) {
@@ -246,7 +251,7 @@ export default function ApplicationsPage() {
           });
 
           if (scrapingResult.jobs && scrapingResult.jobs.length > 0) {
-            const freshJobs = scrapingResult.jobs.filter(job => {
+            const freshJobs = scrapingResult.jobs.filter((job: any) => {
                 // Failsafe to prevent the AI from being lazy and returning the example URL
                 const isExampleUrl = job.job_url.includes('84885169');
                 if (isExampleUrl) {
@@ -277,7 +282,7 @@ export default function ApplicationsPage() {
           auto_applied: false
         }));
         
-        await JobApplication.bulkCreate(jobsToCreate);
+        await JobApplicationEntity.bulkCreate(jobsToCreate);
         console.log(`Created ${jobsToCreate.length} new job applications`);
       }
       

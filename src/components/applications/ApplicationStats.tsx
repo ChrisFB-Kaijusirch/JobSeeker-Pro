@@ -3,17 +3,21 @@ import { motion } from "framer-motion";
 import StatsCard from "../dashboard/StatsCard";
 import { Briefcase, TrendingUp, Clock, Target } from "lucide-react";
 
-export default function ApplicationStats({ applications }) {
-  const pendingApplications = applications.filter(app => app.status === 'pending').length;
-  const interviewApplications = applications.filter(app => 
-    ['interview', 'offer', 'accepted'].includes(app.status)
+interface ApplicationStatsProps {
+  applications: any[];
+}
+
+export default function ApplicationStats({ applications }: ApplicationStatsProps) {
+  const pendingApplications = applications.filter((app: any) => app.status === 'pending').length;
+  const interviewApplications = applications.filter((app: any) =>
+  ['interview', 'offer', 'accepted'].includes(app.status)
   ).length;
-  const todayApplications = applications.filter(app => 
-    new Date(app.created_date).toDateString() === new Date().toDateString()
+  const todayApplications = applications.filter((app: any) =>
+  new Date(app.created_date).toDateString() === new Date().toDateString()
   ).length;
-  const averageMatchScore = applications.length > 0 
-    ? Math.round(applications.reduce((sum, app) => sum + (app.match_score || 0), 0) / applications.length)
-    : 0;
+  const averageMatchScore = applications.length > 0
+  ? Math.round(applications.reduce((sum: number, app: any) => sum + (app.match_score || 0), 0) / applications.length)
+  : 0;
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -39,12 +43,13 @@ export default function ApplicationStats({ applications }) {
     >
       <motion.div variants={itemVariants}>
         <StatsCard
-          title="Total Applications"
-          value={applications.length}
-          icon={Briefcase}
-          trend={todayApplications > 0 ? `+${todayApplications} today` : null}
-          color="emerald"
-        />
+        title="Total Applications"
+        value={applications.length}
+        icon={Briefcase}
+        trend={todayApplications > 0 ? `+${todayApplications} today` : null}
+        color="emerald"
+          onClick={() => {}}
+         />
       </motion.div>
       
       <motion.div variants={itemVariants}>
@@ -54,6 +59,7 @@ export default function ApplicationStats({ applications }) {
           icon={TrendingUp}
           trend={interviewApplications > 0 ? `${interviewApplications} interviews` : null}
           color="blue"
+          onClick={() => {}}
         />
       </motion.div>
       
@@ -64,6 +70,7 @@ export default function ApplicationStats({ applications }) {
           icon={Clock}
           trend="Awaiting response"
           color="amber"
+          onClick={() => {}}
         />
       </motion.div>
       
@@ -74,6 +81,7 @@ export default function ApplicationStats({ applications }) {
           icon={Target}
           trend="Based on resume fit"
           color="purple"
+          onClick={() => {}}
         />
       </motion.div>
     </motion.div>

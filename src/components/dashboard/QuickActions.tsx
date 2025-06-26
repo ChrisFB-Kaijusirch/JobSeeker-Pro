@@ -1,9 +1,9 @@
 import React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { Button } from "../ui/button";
+import { Badge } from "../ui/badge";
 import { Link } from "react-router-dom";
-import { createPageUrl } from "@/utils";
+import { createPageUrl } from "../../utils";
 import { 
   Upload, 
   Settings, 
@@ -18,13 +18,21 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 
-export default function QuickActions({ 
-  activeResume, 
-  preferences, 
-  automationActive, 
+interface QuickActionsProps {
+activeResume: any;
+preferences: any;
+automationActive: boolean;
+onToggleAutomation: (isActive: boolean) => void;
+isFindingJobs: boolean;
+}
+
+export default function QuickActions({
+  activeResume,
+  preferences,
+  automationActive,
   onToggleAutomation,
   isFindingJobs
-}) {
+}: QuickActionsProps) {
   const actions = [
     {
       title: "Upload New Resume",
@@ -176,9 +184,9 @@ export default function QuickActions({
                 transition={{ delay: index * 0.1 }}
               >
                 <Link to={action.href}>
-                  <Button 
-                    variant={action.variant}
-                    className="w-full justify-start gap-3 h-auto p-4 text-left"
+                  <Button
+                  variant={action.variant as "default" | "destructive" | "outline" | "secondary" | "ghost" | "link"}
+                  className="w-full justify-start gap-3 h-auto p-4 text-left"
                   >
                     <action.icon className="w-5 h-5" />
                     <div>

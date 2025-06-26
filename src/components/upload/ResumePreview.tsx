@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
+import { Textarea } from "../ui/textarea";
+import { Badge } from "../ui/badge";
 import { 
   CheckCircle2, 
   X, 
@@ -19,7 +19,14 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 
-export default function ResumePreview({ extractedData, onSave, onCancel, isSaving }) {
+interface ResumePreviewProps {
+  extractedData: any;
+  onSave: (data: any) => void;
+  onCancel: () => void;
+  isSaving: boolean;
+}
+
+export default function ResumePreview({ extractedData, onSave, onCancel, isSaving }: ResumePreviewProps) {
   const [editedData, setEditedData] = useState(extractedData);
   const [isEditing, setIsEditing] = useState(false);
 
@@ -27,14 +34,14 @@ export default function ResumePreview({ extractedData, onSave, onCancel, isSavin
     onSave(editedData);
   };
 
-  const handleInputChange = (field, value) => {
+  const handleInputChange = (field: string, value: any) => {
     setEditedData(prev => ({
       ...prev,
       [field]: value
     }));
   };
 
-  const handleContactChange = (field, value) => {
+  const handleContactChange = (field: string, value: string) => {
     setEditedData(prev => ({
       ...prev,
       contact_info: {
@@ -44,21 +51,21 @@ export default function ResumePreview({ extractedData, onSave, onCancel, isSavin
     }));
   };
 
-  const handleArrayChange = (field, index, value) => {
+  const handleArrayChange = (field: string, index: number, value: string) => {
     setEditedData(prev => ({
       ...prev,
       [field]: prev[field].map((item, i) => i === index ? value : item)
     }));
   };
 
-  const addArrayItem = (field) => {
+  const addArrayItem = (field: string) => {
     setEditedData(prev => ({
       ...prev,
       [field]: [...(prev[field] || []), ""]
     }));
   };
 
-  const removeArrayItem = (field, index) => {
+  const removeArrayItem = (field: string, index: number) => {
     setEditedData(prev => ({
       ...prev,
       [field]: prev[field].filter((_, i) => i !== index)

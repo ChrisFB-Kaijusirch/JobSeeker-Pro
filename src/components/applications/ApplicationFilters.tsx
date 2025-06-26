@@ -1,14 +1,14 @@
 import React from "react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { 
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
+import { Button } from "../ui/button";
+import { Badge } from "../ui/badge";
+import {
+Select,
+SelectContent,
+SelectItem,
+SelectTrigger,
+SelectValue,
+} from "../ui/select";
+import { Input } from "../ui/input";
 import { Filter, MapPin, DollarSign, Clock, X } from "lucide-react";
 
 export default function ApplicationFilters({ filters, onFiltersChange }) {

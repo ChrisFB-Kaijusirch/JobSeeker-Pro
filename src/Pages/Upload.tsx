@@ -1,13 +1,14 @@
 
 import React, { useState, useCallback } from "react";
-import { Resume } from "@/entities/all";
-import { UploadFile, ExtractDataFromUploadedFile } from "@/integrations/Core";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Resume } from "../types";
+import { Resume as ResumeEntity } from "../entities/all";
+import { UploadFile, ExtractDataFromUploadedFile } from "../integrations/Core";
+import { Button } from "../components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
+import { Progress } from "../components/ui/progress";
+import { Alert, AlertDescription } from "../components/ui/alert";
 import { useNavigate } from "react-router-dom";
-import { createPageUrl } from "@/utils";
+import { createPageUrl } from "../utils";
 import { 
   Upload as UploadIcon, 
   FileText, 
@@ -24,15 +25,15 @@ import ResumePreview from "../components/upload/ResumePreview";
 
 export default function UploadPage() {
   const navigate = useNavigate();
-  const [file, setFile] = useState(null);
+  const [file, setFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
-  const [extractedData, setExtractedData] = useState(null);
-  const [error, setError] = useState(null);
+  const [extractedData, setExtractedData] = useState<any>(null);
+  const [error, setError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
-  const handleFileSelect = (selectedFile) => {
+  const handleFileSelect = (selectedFile: File) => {
     if (selectedFile.type !== "application/pdf") {
       setError("Please upload a PDF file only.");
       return;
@@ -110,26 +111,26 @@ export default function UploadPage() {
       } else {
         throw new Error(result.details || "Failed to process resume");
       }
-    } catch (error) {
+    } catch (error: any) {
       setError(`Error processing resume: ${error.message}`);
     }
     
     setIsProcessing(false);
   };
 
-  const saveResume = async (resumeData) => {
+  const saveResume = async (resumeData: any) => {
     setIsSaving(true);
     try {
       // Mark all existing resumes as inactive
-      const existingResumes = await Resume.list();
+      const existingResumes = await ResumeEntity.list();
       for (const resume of existingResumes) {
         if (resume.is_active) {
-          await Resume.update(resume.id, { is_active: false });
+          await ResumeEntity.update(resume.id, { is_active: false });
         }
       }
       
       // Save new resume as active
-      await Resume.create({
+      await ResumeEntity.create({
         ...resumeData,
         is_active: true
       });

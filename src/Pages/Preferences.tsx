@@ -1,13 +1,14 @@
 
 import React, { useState, useEffect } from "react";
-import { JobPreferences } from "@/entities/all";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
-import { Badge } from "@/components/ui/badge";
+import { JobPreferences } from "../types";
+import { JobPreferences as JobPreferencesEntity } from "../entities/all";
+import { Button } from "../components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
+import { Textarea } from "../components/ui/textarea";
+import { Switch } from "../components/ui/switch";
+import { Badge } from "../components/ui/badge";
 import {
   Settings,
   Target,
@@ -26,11 +27,23 @@ import { motion } from "framer-motion";
 import PreferenceSection from "../components/preferences/PreferenceSection";
 
 export default function PreferencesPage() {
-  const [preferences, setPreferences] = useState({
+  const [preferences, setPreferences] = useState<{
+    preferred_job_titles: string[];
+    locations: string[];
+    salary_min: number | null;
+    salary_max: number | null;
+    employment_types: string[];
+    keywords_include: string[];
+    keywords_exclude: string[];
+    auto_apply_enabled: boolean;
+    max_applications_per_day: number;
+    email_alerts_enabled: boolean;
+    alert_frequency: 'daily' | 'weekly';
+  }>({
     preferred_job_titles: [],
     locations: [],
-    salary_min: '',
-    salary_max: '',
+    salary_min: null,
+    salary_max: null,
     employment_types: [],
     keywords_include: [],
     keywords_exclude: [],
@@ -50,12 +63,12 @@ export default function PreferencesPage() {
   const loadPreferences = async () => {
     setIsLoading(true);
     try {
-      const existing = await JobPreferences.list("-created_date", 1);
+      const existing = await JobPreferencesEntity.list("-created_date", 1);
       if (existing.length > 0) {
         setPreferences({
           ...existing[0],
-          salary_min: existing[0].salary_min || '',
-          salary_max: existing[0].salary_max || ''
+          salary_min: existing[0].salary_min || null,
+          salary_max: existing[0].salary_max || null
         });
       }
     } catch (error) {
@@ -71,45 +84,45 @@ export default function PreferencesPage() {
       // Prepare data with proper type conversion
       const saveData = {
         ...preferences,
-        salary_min: preferences.salary_min === '' ? null : parseFloat(preferences.salary_min),
-        salary_max: preferences.salary_max === '' ? null : parseFloat(preferences.salary_max)
+        salary_min: preferences.salary_min,
+        salary_max: preferences.salary_max
       };
 
       // Remove null values to avoid validation errors if backend expects fields to be absent for "no value"
-      if (saveData.salary_min === null) delete saveData.salary_min;
-      if (saveData.salary_max === null) delete saveData.salary_max;
+      if (saveData.salary_min === null) delete (saveData as any).salary_min;
+      if (saveData.salary_max === null) delete (saveData as any).salary_max;
 
-      const existing = await JobPreferences.list("-created_date", 1);
+      const existing = await JobPreferencesEntity.list("-created_date", 1);
       if (existing.length > 0) {
-        await JobPreferences.update(existing[0].id, saveData);
+        await JobPreferencesEntity.update(existing[0].id, saveData);
       } else {
-        await JobPreferences.create(saveData);
+        await JobPreferencesEntity.create(saveData);
       }
       setSaveSuccess(true);
-      setTimeout(() => setSaveSuccess(false), 3000); // Hide success message after 3 seconds
+      setTimeout(() => setSaveSuccess(false), 3000);
     } catch (error) {
       console.error("Error saving preferences:", error);
     }
     setIsSaving(false);
   };
 
-  const addArrayItem = (field, value) => {
-    if (value.trim() && !preferences[field].includes(value.trim())) {
+  const addArrayItem = (field: keyof typeof preferences, value: string) => {
+    if (value.trim() && Array.isArray(preferences[field]) && !(preferences[field] as string[]).includes(value.trim())) {
       setPreferences(prev => ({
         ...prev,
-        [field]: [...prev[field], value.trim()]
+        [field]: [...(prev[field] as string[]), value.trim()]
       }));
     }
   };
 
-  const removeArrayItem = (field, index) => {
+  const removeArrayItem = (field: keyof typeof preferences, index: number) => {
     setPreferences(prev => ({
       ...prev,
-      [field]: prev[field].filter((_, i) => i !== index)
+      [field]: (prev[field] as string[]).filter((_, i) => i !== index)
     }));
   };
 
-  const toggleEmploymentType = (type) => {
+  const toggleEmploymentType = (type: string) => {
     setPreferences(prev => ({
       ...prev,
       employment_types: prev.employment_types.includes(type)
@@ -175,17 +188,21 @@ export default function PreferencesPage() {
                     placeholder="Add job title (e.g., Software Engineer)"
                     onKeyPress={(e) => {
                       if (e.key === 'Enter') {
-                        addArrayItem('preferred_job_titles', e.target.value);
-                        e.target.value = '';
+                        const target = e.target as HTMLInputElement;
+                        addArrayItem('preferred_job_titles', target.value);
+                        target.value = '';
                       }
                     }}
                   />
                   <Button
                     variant="outline"
                     onClick={(e) => {
-                      const input = e.target.parentElement.querySelector('input');
-                      addArrayItem('preferred_job_titles', input.value);
-                      input.value = '';
+                      const target = e.target as HTMLElement;
+                      const input = target.parentElement?.querySelector('input') as HTMLInputElement;
+                      if (input) {
+                        addArrayItem('preferred_job_titles', input.value);
+                        input.value = '';
+                      }
                     }}
                   >
                     <Plus className="w-4 h-4" />
@@ -223,17 +240,21 @@ export default function PreferencesPage() {
                     placeholder="Add location (e.g., Sydney, Melbourne, Remote)"
                     onKeyPress={(e) => {
                       if (e.key === 'Enter') {
-                        addArrayItem('locations', e.target.value);
-                        e.target.value = '';
+                        const target = e.target as HTMLInputElement;
+                        addArrayItem('locations', target.value);
+                        target.value = '';
                       }
                     }}
                   />
                   <Button
                     variant="outline"
                     onClick={(e) => {
-                      const input = e.target.parentElement.querySelector('input');
-                      addArrayItem('locations', input.value);
-                      input.value = '';
+                      const target = e.target as HTMLElement;
+                      const input = target.parentElement?.querySelector('input') as HTMLInputElement;
+                      if (input) {
+                        addArrayItem('locations', input.value);
+                        input.value = '';
+                      }
                     }}
                   >
                     <Plus className="w-4 h-4" />
@@ -255,10 +276,10 @@ export default function PreferencesPage() {
                     id="salary_min"
                     type="number"
                     placeholder="50000"
-                    value={preferences.salary_min}
+                    value={preferences.salary_min || ''}
                     onChange={(e) => setPreferences(prev => ({
                       ...prev,
-                      salary_min: e.target.value
+                      salary_min: e.target.value ? parseInt(e.target.value) : null
                     }))}
                   />
                 </div>
@@ -268,10 +289,10 @@ export default function PreferencesPage() {
                     id="salary_max"
                     type="number"
                     placeholder="100000"
-                    value={preferences.salary_max}
+                    value={preferences.salary_max || ''}
                     onChange={(e) => setPreferences(prev => ({
                       ...prev,
-                      salary_max: e.target.value
+                      salary_max: e.target.value ? parseInt(e.target.value) : null
                     }))}
                   />
                 </div>
@@ -331,8 +352,9 @@ export default function PreferencesPage() {
                       placeholder="Add keyword"
                       onKeyPress={(e) => {
                         if (e.key === 'Enter') {
-                          addArrayItem('keywords_include', e.target.value);
-                          e.target.value = '';
+                          const target = e.target as HTMLInputElement;
+                          addArrayItem('keywords_include', target.value);
+                          target.value = '';
                         }
                       }}
                     />
@@ -340,9 +362,12 @@ export default function PreferencesPage() {
                       variant="outline"
                       size="icon"
                       onClick={(e) => {
-                        const input = e.target.parentElement.querySelector('input');
-                        addArrayItem('keywords_include', input.value);
-                        input.value = '';
+                        const target = e.target as HTMLElement;
+                        const input = target.parentElement?.querySelector('input') as HTMLInputElement;
+                        if (input) {
+                          addArrayItem('keywords_include', input.value);
+                          input.value = '';
+                        }
                       }}
                     >
                       <Plus className="w-4 h-4" />
@@ -379,8 +404,9 @@ export default function PreferencesPage() {
                       placeholder="Add keyword"
                       onKeyPress={(e) => {
                         if (e.key === 'Enter') {
-                          addArrayItem('keywords_exclude', e.target.value);
-                          e.target.value = '';
+                          const target = e.target as HTMLInputElement;
+                          addArrayItem('keywords_exclude', target.value);
+                          target.value = '';
                         }
                       }}
                     />
@@ -388,9 +414,12 @@ export default function PreferencesPage() {
                       variant="outline"
                       size="icon"
                       onClick={(e) => {
-                        const input = e.target.parentElement.querySelector('input');
-                        addArrayItem('keywords_exclude', input.value);
-                        input.value = '';
+                        const target = e.target as HTMLElement;
+                        const input = target.parentElement?.querySelector('input') as HTMLInputElement;
+                        if (input) {
+                          addArrayItem('keywords_exclude', input.value);
+                          input.value = '';
+                        }
                       }}
                     >
                       <Plus className="w-4 h-4" />
@@ -472,7 +501,7 @@ export default function PreferencesPage() {
                           size="sm"
                           onClick={() => setPreferences(prev => ({
                             ...prev,
-                            alert_frequency: freq
+                            alert_frequency: freq as "daily" | "weekly"
                           }))}
                           className="capitalize"
                         >

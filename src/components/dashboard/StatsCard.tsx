@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from "../ui/card";
 import { motion } from "framer-motion";
 
 const colorClasses = {
@@ -35,8 +35,18 @@ const colorClasses = {
   }
 };
 
-export default function StatsCard({ title, value, icon: Icon, trend, color = "emerald", onClick, clickable = false }) {
-  const colors = colorClasses[color];
+interface StatsCardProps {
+  title: string;
+  value: string | number;
+  icon: React.ComponentType<any>;
+  trend: string | null;
+  color?: string;
+  onClick: () => void;
+  clickable?: boolean;
+}
+
+export default function StatsCard({ title, value, icon: Icon, trend, color = "emerald", onClick, clickable = false }: StatsCardProps) {
+  const colors = colorClasses[color as keyof typeof colorClasses] || colorClasses.emerald;
   
   return (
     <motion.div

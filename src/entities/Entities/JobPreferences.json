@@ -1,0 +1,125 @@
+export interface JobPreferencesSchema {
+  type: string
+  properties: {
+    preferred_job_titles: {
+      type: string
+      items: {
+        type: string
+      }
+      description: string
+    }
+    locations: {
+      type: string
+      items: {
+        type: string
+      }
+      description: string
+    }
+    salary_min: {
+      type: string
+      description: string
+    }
+    salary_max: {
+      type: string
+      description: string
+    }
+    employment_types: {
+      type: string
+      items: {
+        type: string
+        enum: string[]
+      }
+      description: string
+    }
+    keywords_include: {
+      type: string
+      items: {
+        type: string
+      }
+      description: string
+    }
+    keywords_exclude: {
+      type: string
+      items: {
+        type: string
+      }
+      description: string
+    }
+    auto_apply_enabled: {
+      type: string
+      default: boolean
+      description: string
+    }
+    max_applications_per_day: {
+      type: string
+      default: number
+      description: string
+    }
+  }
+  required: string[]
+}
+
+// Define the schema
+export const jobPreferencesSchema: JobPreferencesSchema = {
+  type: "object",
+  properties: {
+    preferred_job_titles: {
+      type: "array",
+      items: {
+        type: "string"
+      },
+      description: "Job titles to search for"
+    },
+    locations: {
+      type: "array",
+      items: {
+        type: "string"
+      },
+      description: "Locations to search for jobs in"
+    },
+    salary_min: {
+      type: "string",
+      description: "Minimum salary requirement"
+    },
+    salary_max: {
+      type: "string",
+      description: "Maximum salary expectation"
+    },
+    employment_types: {
+      type: "array",
+      items: {
+        type: "string",
+        enum: ["full-time", "part-time", "contract", "casual", "internship"]
+      },
+      description: "Types of employment to consider"
+    },
+    keywords_include: {
+      type: "array",
+      items: {
+        type: "string"
+      },
+      description: "Keywords to look for in job descriptions"
+    },
+    keywords_exclude: {
+      type: "array",
+      items: {
+        type: "string"
+      },
+      description: "Keywords to avoid in job descriptions"
+    },
+    auto_apply_enabled: {
+      type: "boolean",
+      default: false,
+      description: "Whether to automatically apply to matching jobs"
+    },
+    max_applications_per_day: {
+      type: "number",
+      default: 5,
+      description: "Maximum number of applications to submit per day"
+    }
+  },
+  required: [
+    "preferred_job_titles",
+    "locations"
+  ]
+}

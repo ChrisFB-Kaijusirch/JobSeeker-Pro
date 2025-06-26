@@ -1,0 +1,20 @@
+export interface Resume {
+  id?: string
+  name: string
+  content: string
+  is_active: boolean
+  created_date?: string
+  file_url: string
+  parsed_content?: string
+  skills?: string[]
+  experience_years?: number
+  job_titles?: string[]
+  education?: string[]
+  contact_info?: {
+    email?: string
+    phone?: string
+    location?: string
+  }
+}
+
+export default Resume
