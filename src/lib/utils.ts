@@ -27,11 +27,12 @@ export function formatDate(
     ? new Date(date) 
     : date;
   
-  const options: Intl.DateTimeFormatOptions = {
-    short: { month: 'numeric', day: 'numeric', year: '2-digit' },
-    medium: { month: 'short', day: 'numeric', year: 'numeric' },
-    long: { month: 'long', day: 'numeric', year: 'numeric', weekday: 'long' }
-  }[format];
+  const optionsMap = {
+    short: { month: 'numeric' as const, day: 'numeric' as const, year: '2-digit' as const },
+    medium: { month: 'short' as const, day: 'numeric' as const, year: 'numeric' as const },
+    long: { month: 'long' as const, day: 'numeric' as const, year: 'numeric' as const, weekday: 'long' as const }
+  };
+  const options = optionsMap[format];
   
   return new Intl.DateTimeFormat('en-US', options).format(d);
 }
