@@ -15,6 +15,7 @@ export interface JobApplication {
   is_bookmarked: boolean;
   source: string;
   auto_applied?: boolean;
+  match_score?: number;
 }
 
 export interface Resume {

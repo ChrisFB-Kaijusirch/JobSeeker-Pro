@@ -3,7 +3,8 @@ import React from "react";
 import { Card, CardContent } from "../ui/card";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
-import { JobApplication } from "../../entities/all";
+import type { JobApplication } from "../../types";
+import { JobApplication as JobApplicationEntity } from "../../entities/all";
 import { 
   ExternalLink, 
   Building2, 
@@ -31,7 +32,7 @@ const statusColors = {
   accepted: "bg-green-200 text-green-900 border-green-300"
 };
 
-const employmentTypeColors = {
+const employmentTypeColors: { [key: string]: string } = {
   full_time: "bg-blue-50 text-blue-700 border-blue-200",
   part_time: "bg-purple-50 text-purple-700 border-purple-200",
   contract: "bg-orange-50 text-orange-700 border-orange-200",
@@ -69,7 +70,7 @@ const getJobSource = (url: string) => {
 };
 
 // Add job source colors for better visual distinction
-const jobSourceColors = {
+const jobSourceColors: { [key: string]: string } = {
   'Seek': 'bg-pink-50 text-pink-700 border-pink-200',
   'Indeed': 'bg-blue-50 text-blue-700 border-blue-200',
   'Adzuna': 'bg-orange-50 text-orange-700 border-orange-200',
@@ -87,14 +88,19 @@ const jobSourceColors = {
   'default': 'bg-gray-50 text-gray-700 border-gray-200'
 };
 
-export default function ApplicationCard({ application, index }) {
-  const handleApply = async (e) => {
+interface ApplicationCardProps {
+  application: JobApplication;
+  index: number;
+}
+
+export default function ApplicationCard({ application, index }: ApplicationCardProps) {
+  const handleApply = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     
     try {
       // Update status to applied and set application date
-      await JobApplication.update(application.id, {
+      await JobApplicationEntity.update(application.id, {
         status: 'applied',
         application_date: new Date().toISOString().split('T')[0]
       });
@@ -111,13 +117,13 @@ export default function ApplicationCard({ application, index }) {
     }
   };
 
-  const handleBookmark = async (e) => {
+  const handleBookmark = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     
     try {
       const newBookmarkStatus = !application.is_bookmarked;
-      await JobApplication.update(application.id, {
+      await JobApplicationEntity.update(application.id, {
         is_bookmarked: newBookmarkStatus
       });
       
@@ -150,7 +156,7 @@ export default function ApplicationCard({ application, index }) {
                   <div className="flex items-center gap-4 text-slate-600 mt-1">
                     <div className="flex items-center gap-2">
                       <Building2 className="w-4 h-4" />
-                      <span className="font-medium">{application.company_name}</span>
+                      <span className="font-medium">{application.company}</span>
                     </div>
                     {jobSource && (
                       <Badge 

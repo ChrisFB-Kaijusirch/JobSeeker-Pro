@@ -35,14 +35,14 @@ export default function ResumePreview({ extractedData, onSave, onCancel, isSavin
   };
 
   const handleInputChange = (field: string, value: any) => {
-    setEditedData(prev => ({
+    setEditedData((prev: any) => ({
       ...prev,
       [field]: value
     }));
   };
 
   const handleContactChange = (field: string, value: string) => {
-    setEditedData(prev => ({
+    setEditedData((prev: any) => ({
       ...prev,
       contact_info: {
         ...prev.contact_info,
@@ -52,23 +52,23 @@ export default function ResumePreview({ extractedData, onSave, onCancel, isSavin
   };
 
   const handleArrayChange = (field: string, index: number, value: string) => {
-    setEditedData(prev => ({
+    setEditedData((prev: any) => ({
       ...prev,
-      [field]: prev[field].map((item, i) => i === index ? value : item)
+      [field]: prev[field].map((item: any, i: number) => i === index ? value : item)
     }));
   };
 
   const addArrayItem = (field: string) => {
-    setEditedData(prev => ({
+    setEditedData((prev: any) => ({
       ...prev,
       [field]: [...(prev[field] || []), ""]
     }));
   };
 
   const removeArrayItem = (field: string, index: number) => {
-    setEditedData(prev => ({
+    setEditedData((prev: any) => ({
       ...prev,
-      [field]: prev[field].filter((_, i) => i !== index)
+      [field]: prev[field].filter((_: any, i: number) => i !== index)
     }));
   };
 
@@ -201,7 +201,7 @@ export default function ResumePreview({ extractedData, onSave, onCancel, isSavin
             
             {isEditing ? (
               <div className="space-y-2">
-                {editedData.job_titles?.map((title, index) => (
+                {editedData.job_titles?.map((title: string, index: number) => (
                   <div key={index} className="flex gap-2">
                     <Input
                       value={title}
@@ -220,7 +220,7 @@ export default function ResumePreview({ extractedData, onSave, onCancel, isSavin
               </div>
             ) : (
               <div className="flex flex-wrap gap-2">
-                {editedData.job_titles?.map((title, index) => (
+                {editedData.job_titles?.map((title: string, index: number) => (
                   <Badge key={index} variant="outline" className="text-slate-700">
                     {title}
                   </Badge>
@@ -246,7 +246,7 @@ export default function ResumePreview({ extractedData, onSave, onCancel, isSavin
             
             {isEditing ? (
               <div className="space-y-2">
-                {editedData.skills?.map((skill, index) => (
+                {editedData.skills?.map((skill: string, index: number) => (
                   <div key={index} className="flex gap-2">
                     <Input
                       value={skill}
@@ -265,7 +265,7 @@ export default function ResumePreview({ extractedData, onSave, onCancel, isSavin
               </div>
             ) : (
               <div className="flex flex-wrap gap-2">
-                {editedData.skills?.map((skill, index) => (
+                {editedData.skills?.map((skill: string, index: number) => (
                   <Badge key={index} className="bg-emerald-100 text-emerald-800 border-emerald-200">
                     {skill}
                   </Badge>
@@ -283,7 +283,7 @@ export default function ResumePreview({ extractedData, onSave, onCancel, isSavin
             
             {isEditing ? (
               <div className="space-y-2">
-                {editedData.education?.map((edu, index) => (
+                {editedData.education?.map((edu: string, index: number) => (
                   <div key={index} className="flex gap-2">
                     <Input
                       value={edu}
@@ -309,7 +309,7 @@ export default function ResumePreview({ extractedData, onSave, onCancel, isSavin
               </div>
             ) : (
               <div className="space-y-2">
-                {editedData.education?.map((edu, index) => (
+                {editedData.education?.map((edu: string, index: number) => (
                   <div key={index} className="p-3 bg-slate-50 rounded-lg">
                     <p className="text-slate-700">{edu}</p>
                   </div>

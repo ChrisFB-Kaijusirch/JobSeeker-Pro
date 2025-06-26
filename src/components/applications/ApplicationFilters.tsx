@@ -1,4 +1,5 @@
 import React from "react";
+import type { FilterOptions } from "../../types";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
 import {
@@ -11,8 +12,13 @@ SelectValue,
 import { Input } from "../ui/input";
 import { Filter, MapPin, DollarSign, Clock, X } from "lucide-react";
 
-export default function ApplicationFilters({ filters, onFiltersChange }) {
-  const handleFilterChange = (key, value) => {
+interface ApplicationFiltersProps {
+  filters: FilterOptions;
+  onFiltersChange: (updater: (prev: FilterOptions) => FilterOptions) => void;
+}
+
+export default function ApplicationFilters({ filters, onFiltersChange }: ApplicationFiltersProps) {
+  const handleFilterChange = (key: keyof FilterOptions, value: any) => {
     onFiltersChange(prev => ({
       ...prev,
       [key]: value
@@ -22,16 +28,17 @@ export default function ApplicationFilters({ filters, onFiltersChange }) {
   const activeFiltersCount = Object.values(filters).filter(value => value !== "all" && value !== "").length;
 
   const clearAllFilters = () => {
-    onFiltersChange({
+    onFiltersChange(() => ({
       status: "all",
       employment_type: "all",
       auto_applied: "all",
+      date_range: "all",
       remote_only: "all",
       bookmarked: "all",
       salary_min: "",
       salary_max: "",
       location_filter: ""
-    });
+    }));
   };
 
   return (

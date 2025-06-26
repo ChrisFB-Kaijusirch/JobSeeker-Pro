@@ -9,7 +9,7 @@ interface ResumeUploadZoneProps {
 }
 
 export default function ResumeUploadZone({ onFileSelect }: ResumeUploadZoneProps) {
-  const fileInputRef = useRef(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [dragActive, setDragActive] = useState(false);
 
   const handleDrag = (e: React.DragEvent) => {
@@ -22,19 +22,19 @@ export default function ResumeUploadZone({ onFileSelect }: ResumeUploadZoneProps
     }
   };
 
-  const handleDrop = (e) => {
+  const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
 
-    const files = Array.from(e.dataTransfer.files);
+    const files = Array.from(e.dataTransfer.files) as File[];
     if (files.length > 0) {
       onFileSelect(files[0]);
     }
   };
 
-  const handleFileInput = (e) => {
-    const files = Array.from(e.target.files);
+  const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []) as File[];
     if (files.length > 0) {
       onFileSelect(files[0]);
     }
