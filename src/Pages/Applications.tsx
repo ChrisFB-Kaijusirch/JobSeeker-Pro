@@ -28,7 +28,7 @@ import ApplicationFilters from "../components/applications/ApplicationFilters";
 import ApplicationStats from "../components/applications/ApplicationStats";
 
 export default function ApplicationsPage() {
-  const [applications, setApplications] = useState([]);
+  const [applications, setApplications] = useState<JobApplication[]>([]);
   const [filteredApplications, setFilteredApplications] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [filters, setFilters] = useState({
@@ -151,7 +151,7 @@ export default function ApplicationsPage() {
         JobPreferences.list("-created_date", 1)
       ]);
       
-      const activeResume = resumeData.find(r => r.is_active);
+      const activeResume = resumeData.find((r: Resume) => r.is_active);
       const preferences = prefsData[0];
 
       if (!activeResume || !preferences) {
@@ -330,7 +330,7 @@ export default function ApplicationsPage() {
             <Input
               placeholder="Search jobs, companies, or locations..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(e) => setSearchTerm((e.target as HTMLInputElement).value)}
               className="pl-10 bg-white/80 backdrop-blur-sm border-0 shadow-sm"
             />
           </div>

@@ -16,7 +16,7 @@ import {
   Globe,
   Search,
   Bookmark,
-  BookmarkCheck
+  BookmarkPlus
 } from "lucide-react";
 import { format, formatDistanceToNow } from "date-fns";
 import { motion } from "framer-motion";
@@ -248,7 +248,7 @@ export default function ApplicationCard({ application, index }) {
                 title={application.is_bookmarked ? "Remove from bookmarks" : "Add to bookmarks"}
               >
                 {application.is_bookmarked ? (
-                  <BookmarkCheck className="w-4 h-4" />
+                  <BookmarkPlus className="w-4 h-4" />
                 ) : (
                   <Bookmark className="w-4 h-4" />
                 )}

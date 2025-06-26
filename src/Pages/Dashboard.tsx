@@ -324,6 +324,7 @@ export default function Dashboard() {
               icon={Briefcase}
               trend={todayApplications.length > 0 ? `+${todayApplications.length} today` : null}
               color="emerald"
+              onClick={() => {}}
             />
           </motion.div>
 
